@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#009688"
+    android:elevation="5dp">
+    <TextView
+        android:id="@+id/tv_month"
+        android:layout_marginLeft="150dp"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:text="Sep 2021"
+        android:textSize="25sp"
+        android:textColor="@color/black" />
+    <ImageView
+        android:id="@+id/setting"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_baseline_settings_24"
+        android:layout_gravity="right"
+        android:padding="20dp"/>
+</Toolbar>
