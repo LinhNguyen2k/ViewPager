@@ -2,6 +2,7 @@ package com.example.nguyenanhlinh_viewpager.adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Color
 import android.os.Handler
@@ -15,8 +16,10 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.example.nguyenanhlinh_viewpager.MainActivity_Notes
 import com.example.nguyenanhlinh_viewpager.OnDoubleClick
 import com.example.nguyenanhlinh_viewpager.R
+import com.example.nguyenanhlinh_viewpager.SQLite_Notes
 import com.example.nguyenanhlinh_viewpager.model.DayOfMonth
 import java.util.*
 
@@ -25,11 +28,11 @@ class CalendarAdapter(
     var context: Context?,
 ) :
     RecyclerView.Adapter<CalendarAdapter.ViewHolder>() {
-    //    var index = -1
-    var color: Int = Color.GREEN
+    var color: Int = Color.CYAN
     var month = 0
     var year = 0
     var check = 0
+    var dateChecked = ""
     lateinit var onItemClick: (index: Int) -> Unit
     var index = -1
     private val TAG = "CalendarAdapter"
@@ -65,108 +68,115 @@ class CalendarAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, @SuppressLint("RecyclerView") position: Int) {
 
-        var days = daysOfMonth[holder.adapterPosition]
+        var days = daysOfMonth[position]
         holder.tv_dayOfMonth.text = days.day
 
-        if (holder.adapterPosition <= 6) {
+        if (position <= 6) {
             holder.tv_dayOfMonth.textSize = 15F
             holder.tv_dayOfMonth.setTextColor(ContextCompat.getColor(context!!, R.color.gray))
         }
         if (days.check) {
+            index = position
+            holder.bg_layout.setBackgroundColor(color)
 
-            if (check == 1) {
-                index = holder.adapterPosition
-                holder.bg_layout.setBackgroundColor(color)
-            } else if (check > 1) {
-                index = holder.adapterPosition
-                holder.bg_layout.setBackgroundColor(Color.RED)
-            }else{
-                index = holder.adapterPosition
-                holder.bg_layout.setBackgroundColor(color)
-                daysOfMonth[index].check = false
-            }
 
         } else {
             holder.bg_layout.setBackgroundColor(0)
             val share = context?.getSharedPreferences("date", Context.MODE_PRIVATE)
 
-            if (month == share?.getInt("month", 0)
-                && year == share.getInt("year", 0)
-                && holder.adapterPosition > 6
-                && daysOfMonth[holder.adapterPosition].day.toInt() == share.getInt("dayOfWeek", 0)
-                && daysOfMonth[holder.adapterPosition].checkDayOfMonth == share.getBoolean(
-                    "isCurrentMonth",
+            val sqliteNotes = SQLite_Notes(context)
+            dateChecked = "${daysOfMonth[holder.adapterPosition].day}/${
+                month}/${year}"
+            if (!sqliteNotes.checkLocalDate(dateChecked) && daysOfMonth[holder.adapterPosition].checkDayOfMonth == share?.getBoolean(
+                    "checkDayOfMonth",
                     false
                 )
-
             ) {
-                Log.d(
-                    TAG,
-                    "bindData: ${holder.adapterPosition} - ${share.getInt("index", 0)} ${
-                        share.getInt(
-                            "month",
-                            0
-                        )
-                    } $month"
-                )
-                index = holder.adapterPosition
-                holder.bg_layout.setBackgroundColor(color)
+                holder.bg_layout.setBackgroundColor(Color.GREEN)
+
             }
+
+//            if (month == share?.getInt("month", 0)
+//                && year == share.getInt("year", 0)
+//                && position > 6
+//                && daysOfMonth[holder.adapterPosition].day.toInt() == share.getInt("dayOfWeek", 0)
+//                && daysOfMonth[holder.adapterPosition].checkDayOfMonth == share.getBoolean(
+//                    "checkDayOfMonth",
+//                    false
+//                )
+//
+//            ) {
+//                if (check == 1) {
+//                    index = position
+//                    holder.bg_layout.setBackgroundColor(Color.GREEN)
+//                } else if (check == 2) {
+//                    index = position
+//                    holder.bg_layout.setBackgroundColor(Color.RED)
+//                }
+//            }
 
         }
         if (!days.checkDayOfMonth) {
             holder.tv_dayOfMonth.setTextColor(ContextCompat.getColor(context!!, R.color.gray))
         } else {
-            holder.tv_dayOfMonth.setTextColor(ContextCompat.getColor(context!!, R.color.black))
+            holder.tv_dayOfMonth.setTextColor(ContextCompat.getColor(context!!, R.color.white))
         }
-        holder.itemView.setOnTouchListener { _, motionEvent ->
-            if (motionEvent.action == MotionEvent.ACTION_DOWN) {
-                check++
+//        holder.itemView.setOnTouchListener { _, motionEvent ->
+//            if (motionEvent.action == MotionEvent.ACTION_DOWN) {
+//                check++
+//
+//                Handler(Looper.getMainLooper()).postDelayed({
+//                    check = 0
+//                }, 300)
+//            }
+//            false
+//
+//        }
 
-                Handler(Looper.getMainLooper()).postDelayed({
-                    check = 0
-                }, 300)
+        val sharedPreferences1 = context!!.getSharedPreferences("date", Context.MODE_PRIVATE)
+        val sharedPreferences2 = context!!.getSharedPreferences("month_year", Context.MODE_PRIVATE)
+        holder.itemView.setOnClickListener(object : OnDoubleClick() {
+
+            override fun onDoubleClick() {
+//                check = 2
+                if (index == -1) index = position
+                daysOfMonth[index].check = false
+                daysOfMonth[position].check = true
+                notifyItemChanged(index)
+                index = position
+                color = Color.CYAN
+                notifyItemChanged(position)
+                val editor1 = sharedPreferences1.edit()
+                editor1?.putInt("index", position)
+                editor1?.putInt("dayOfWeek", daysOfMonth[position].day.toInt())
+                editor1?.putBoolean("checkDayOfMonth", daysOfMonth[position].checkDayOfMonth)
+                editor1?.putInt("month", sharedPreferences2!!.getInt("month", 0))
+                editor1?.putInt("year", sharedPreferences2!!.getInt("year", 0))
+                editor1?.commit()
+                val intent = Intent(context, MainActivity_Notes::class.java)
+                context!!.startActivity(intent)
             }
-            false
 
-        }
+            override fun onSingleClick() {
+//                check = 1
+                if (index == -1) index = position
+                daysOfMonth[index].check = false
+                daysOfMonth[position].check = true
+                notifyItemChanged(index)
+                index = position
+                color = Color.CYAN
+                notifyItemChanged(position)
+                val editor1 = sharedPreferences1.edit()
+                editor1?.putInt("index", position)
+                editor1?.putInt("dayOfWeek", daysOfMonth[position].day.toInt())
+                editor1?.putBoolean("checkDayOfMonth", daysOfMonth[position].checkDayOfMonth)
+                editor1?.putInt("month", sharedPreferences2!!.getInt("month", 0))
+                editor1?.putInt("year", sharedPreferences2!!.getInt("year", 0))
+                editor1?.commit()
 
-//        sharedPreferences1 = context.getSharedPreferences("date", Context.MODE_PRIVATE)
-//        sharedPreferences2 = context.getSharedPreferences("month_year", Context.MODE_PRIVATE)
-//        holder.itemView.setOnClickListener(object : OnDoubleClick() {
-//
-//            override fun onDoubleClick() {
-//                if (index == -1) index = position
-//                daysOfMonth[index].check = false
-//                daysOfMonth[position].check = true
-//                notifyItemChanged(index)
-//                index = position
-//                color = Color.RED
-//                notifyItemChanged(position)
-//
-//            }
+            }
 
-//            override fun onSingleClick() {
-//                if (index == -1) index = position
-//                daysOfMonth[index].check = false
-//                daysOfMonth[position].check = true
-//                notifyItemChanged(index)
-//                index = position
-//                color = Color.GREEN
-//                notifyItemChanged(position)
-////                val editor1 = sharedPreferences1.edit()
-////                editor1?.putInt("index", position)
-////                editor1?.putInt("dayOfWeek", daysOfMonth[position].day.toInt())
-//////                editor1?.putBoolean("checkDayOfMonth", daysOfMonth[position].checkDayOfMonth)
-////                editor1?.putInt("month2", sharedPreferences2!!.getInt("month1", 0))
-////                editor1?.putInt("year2", sharedPreferences2!!.getInt("year1", 0))
-////                editor1?.apply()
-
-
-//
-//            }
-
-//        })
+        })
 
 
     }

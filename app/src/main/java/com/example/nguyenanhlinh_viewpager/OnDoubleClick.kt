@@ -27,15 +27,15 @@ abstract class OnDoubleClick : View.OnClickListener {
         }
     }
     abstract fun onDoubleClick()
-//    abstract fun onSingleClick()
+    abstract fun onSingleClick()
 
     init {
         firstClickTime = 0L
         handler = Handler(Looper.getMainLooper())
         runnable = Runnable {
-//            if (isSingleEvent) {
-//                onSingleClick()
-//            }
+            if (isSingleEvent) {
+                onSingleClick()
+            }
         }
     }
 

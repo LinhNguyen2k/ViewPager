@@ -2,13 +2,14 @@ package com.example.nguyenanhlinh_viewpager.fragment
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Color
+
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.nguyenanhlinh_viewpager.adapter.CalendarAdapter
@@ -22,6 +23,7 @@ import kotlin.collections.ArrayList
 class DayOfMonthFragment : Fragment() {
     lateinit var selectedDate: LocalDate
     var startDay = ""
+    var custom_line: Int = R.drawable.custom_line
     private val TAG = "CalendarAdapter"
     var isPageCenter = false
     private lateinit var calendarAdapters: CalendarAdapter
@@ -51,29 +53,43 @@ class DayOfMonthFragment : Fragment() {
             GridLayoutManager(activity, 7)
         view.calendarRecyclerView.setHasFixedSize(true)
         view.calendarRecyclerView.adapter = calendarAdapters
-        val itemDecoration =
+        var itemDecoration =
             DividerItemDecoration(activity, DividerItemDecoration.VERTICAL)
+        itemDecoration.setDrawable(ContextCompat.getDrawable(requireContext(),R.drawable.custom_line)!!)
         view.calendarRecyclerView.addItemDecoration(itemDecoration)
-        val share = requireActivity().getSharedPreferences("date", Context.MODE_PRIVATE)
-        calendarAdapters.setItemClick {
-            if (calendarAdapters.index == -1)
-                calendarAdapters.index = it
-            listDayOfMonth[calendarAdapters.index].check = false
-            listDayOfMonth[it].check = true
-            calendarAdapters.notifyItemChanged(calendarAdapters.index)
-            calendarAdapters.index = it
-            calendarAdapters.color = Color.GREEN
-            calendarAdapters.notifyItemChanged(it)
-            val editor = share?.edit()
-
-            editor?.putInt("index", it)
-            editor?.putInt("dayOfWeek", listDayOfMonth[it].day.toInt())
-            editor?.putBoolean("isCurrentMonth", listDayOfMonth[it].checkDayOfMonth)
-            editor?.putInt("month", selectedDate.month.value)
-            editor?.putInt("year", selectedDate.year)
-            editor?.commit()
-
+        if (selectedDate.month.value - 1 == 12){
+            val share = requireActivity().getSharedPreferences("month_year", Context.MODE_PRIVATE)
+            val editor = share.edit()
+            editor.putInt("month", selectedDate.month.value )
+            editor.putInt("year", selectedDate.year -1)
+            editor.commit()
+        }else{
+            val share = requireActivity().getSharedPreferences("month_year", Context.MODE_PRIVATE)
+            val editor = share.edit()
+            editor.putInt("month", selectedDate.month.value -1)
+            editor.putInt("year", selectedDate.year)
+            editor.commit()
         }
+
+//        val share = requireActivity().getSharedPreferences("date", Context.MODE_PRIVATE)
+//        calendarAdapters.setItemClick {
+////            if (calendarAdapters.index == -1)
+////                calendarAdapters.index = it
+////            listDayOfMonth[calendarAdapters.index].check = false
+////            listDayOfMonth[it].check = true
+////            calendarAdapters.notifyItemChanged(calendarAdapters.index)
+////            calendarAdapters.index = it
+////            calendarAdapters.color = Color.GREEN
+////            calendarAdapters.notifyItemChanged(it)
+////            val editor = share?.edit()
+////            editor?.putInt("index", it)
+////            editor?.putInt("dayOfWeek", listDayOfMonth[it].day.toInt())
+////            editor?.putBoolean("isCurrentMonth", listDayOfMonth[it].checkDayOfMonth)
+////            editor?.putInt("month", selectedDate.month.value)
+////            editor?.putInt("year", selectedDate.year)
+////            editor?.commit()
+//
+//        }
         return view
     }
 
@@ -107,7 +123,7 @@ class DayOfMonthFragment : Fragment() {
         val isOfMonth = yearMonth.lengthOfMonth()
         val index = weekTitle.indexOf(week[times.dayOfWeek.value - 1]) + 1
         val dayOfPreviousMonth = date.withDayOfMonth(1).plusDays((-index).toLong()).dayOfMonth
-        val share = requireActivity().getSharedPreferences("date", Context.MODE_PRIVATE)
+//        val share = requireActivity().getSharedPreferences("date", Context.MODE_PRIVATE)
         var currentTime = LocalDate.now()
         for (i in 1 until index) {
             listDayOfMonth.add(
@@ -119,11 +135,11 @@ class DayOfMonthFragment : Fragment() {
         }
 
         for (i in 1..isOfMonth) {
-            if (i == currentTime.dayOfMonth && date.month.value == currentTime.month.value && date.year == currentTime.year) {
-                listDayOfMonth.add(DayOfMonth(i.toString(), check = true, checkDayOfMonth = true))
-            }else{
+//            if (i == currentTime.dayOfMonth && date.month.value == currentTime.month.value && date.year == currentTime.year) {
+//                listDayOfMonth.add(DayOfMonth(i.toString(), check = true, checkDayOfMonth = true))
+//            }else{
                 listDayOfMonth.add(DayOfMonth(i.toString(), check = false, checkDayOfMonth = true))
-            }
+//            }
 
 
 //            if (i == share.getInt(
@@ -167,6 +183,7 @@ class DayOfMonthFragment : Fragment() {
         calendarAdapters.month = selectedDate.month.value
         calendarAdapters.year = selectedDate.year
         Log.d(TAG,"${calendarAdapters.month}")
+
         calendarAdapters.notifyDataSetChanged()
     }
 

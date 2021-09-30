@@ -15,6 +15,25 @@
         <entry key="..\:/Code/Android_2021/Training/NguyenAnhLinh_ViewPager/app/src/main/res/layout/fragment_day_of_month.xml" value="0.24094202898550723" />
         <entry key="..\:/Code/Android_2021/Training/NguyenAnhLinh_ViewPager/app/src/main/res/layout/toolbar.xml" value="0.14447463768115942" />
         <entry key="..\:/Code/Android_2021/Training/NguyenAnhLinh_ViewPager/app/src/main/res/menu/menu.xml" value="0.2713541666666667" />
+        <entry key="..\:/Code/Kotlin_Android/NguyenAnhLinh_ViewPager/app/src/main/res/drawable/custom_layout_list_notes.xml" value="0.290625" />
+        <entry key="..\:/Code/Kotlin_Android/NguyenAnhLinh_ViewPager/app/src/main/res/drawable/custom_line.xml" value="0.290625" />
+        <entry key="..\:/Code/Kotlin_Android/NguyenAnhLinh_ViewPager/app/src/main/res/drawable/custom_lock_icon.xml" value="0.290625" />
+        <entry key="..\:/Code/Kotlin_Android/NguyenAnhLinh_ViewPager/app/src/main/res/drawable/custom_login_button.xml" value="0.290625" />
+        <entry key="..\:/Code/Kotlin_Android/NguyenAnhLinh_ViewPager/app/src/main/res/drawable/custom_text_input.xml" value="0.290625" />
+        <entry key="..\:/Code/Kotlin_Android/NguyenAnhLinh_ViewPager/app/src/main/res/drawable/ic_baseline_arrow_back_24.xml" value="0.290625" />
+        <entry key="..\:/Code/Kotlin_Android/NguyenAnhLinh_ViewPager/app/src/main/res/drawable/ic_baseline_arrow_back_ios_new_24.xml" value="0.290625" />
+        <entry key="..\:/Code/Kotlin_Android/NguyenAnhLinh_ViewPager/app/src/main/res/drawable/ic_baseline_create_24.xml" value="0.290625" />
+        <entry key="..\:/Code/Kotlin_Android/NguyenAnhLinh_ViewPager/app/src/main/res/drawable/ic_baseline_delete_24.xml" value="0.290625" />
+        <entry key="..\:/Code/Kotlin_Android/NguyenAnhLinh_ViewPager/app/src/main/res/drawable/ic_baseline_search_24.xml" value="0.290625" />
+        <entry key="..\:/Code/Kotlin_Android/NguyenAnhLinh_ViewPager/app/src/main/res/drawable/ic_baseline_settings_24.xml" value="0.290625" />
+        <entry key="..\:/Code/Kotlin_Android/NguyenAnhLinh_ViewPager/app/src/main/res/drawable/lock_icon_focused.xml" value="0.290625" />
+        <entry key="..\:/Code/Kotlin_Android/NguyenAnhLinh_ViewPager/app/src/main/res/layout/activity_main.xml" value="0.23233695652173914" />
+        <entry key="..\:/Code/Kotlin_Android/NguyenAnhLinh_ViewPager/app/src/main/res/layout/activity_main_detail.xml" value="0.18931159420289856" />
+        <entry key="..\:/Code/Kotlin_Android/NguyenAnhLinh_ViewPager/app/src/main/res/layout/activity_main_list_notes.xml" value="0.22735507246376813" />
+        <entry key="..\:/Code/Kotlin_Android/NguyenAnhLinh_ViewPager/app/src/main/res/layout/activity_main_notes.xml" value="0.23233695652173914" />
+        <entry key="..\:/Code/Kotlin_Android/NguyenAnhLinh_ViewPager/app/src/main/res/layout/custom_item.xml" value="0.20652173913043478" />
+        <entry key="..\:/Code/Kotlin_Android/NguyenAnhLinh_ViewPager/app/src/main/res/layout/custom_item_list_note.xml" value="0.22735507246376813" />
+        <entry key="..\:/Code/Kotlin_Android/NguyenAnhLinh_ViewPager/app/src/main/res/layout/onbroading.xml" value="0.264" />
       </map>
     </option>
   </component>

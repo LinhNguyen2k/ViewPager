@@ -3,19 +3,28 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.nguyenanhlinh_viewpager">
 
-
-
-
     <application
         android:allowBackup="true"
-        android:usesCleartextTraffic="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.NguyenAnhLinh_ViewPager">
+        android:theme="@style/Theme.NguyenAnhLinh_ViewPager"
+        android:usesCleartextTraffic="true">
+        <activity
+            android:name=".MainActivity_Detail"
+            android:exported="true" />
+        <activity
+            android:name=".MainActivity_List_Notes"
+            android:exported="true" />
+        <activity
+            android:name=".MainActivity_Notes"
+            android:exported="true" />
         <activity
             android:name=".MainActivity"
+            android:exported="true" />
+        <activity
+            android:name=".OnBroadingActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

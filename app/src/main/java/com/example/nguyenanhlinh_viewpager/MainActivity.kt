@@ -2,6 +2,7 @@ package com.example.nguyenanhlinh_viewpager
 
 
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -13,6 +14,7 @@ import com.example.nguyenanhlinh_viewpager.adapter.CalendarAdapter
 
 import com.example.nguyenanhlinh_viewpager.adapter.ViewPagerAdapter
 import com.example.nguyenanhlinh_viewpager.fragment.DayOfMonthFragment
+import com.example.nguyenanhlinh_viewpager.model.Notes
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.custom_item.*
@@ -28,12 +30,15 @@ class MainActivity : AppCompatActivity() {
     lateinit var pageAdapter: ViewPagerAdapter
     var index = 1
     var startDay = ""
-
+    lateinit var listNotes: ArrayList<Notes>
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         supportActionBar?.hide()
         listFragment = ArrayList()
+        val sqliteNotes = SQLite_Notes(this)
+        listNotes = sqliteNotes.getAllListNotes()!!
+        tv_listNote.text = "${listNotes.size} ghi chú"
         var localDate = LocalDate.now()
         monthYearTV.text = monthYearFromDate(localDate)
         pageAdapter = ViewPagerAdapter(supportFragmentManager, listFragment)
@@ -69,6 +74,15 @@ class MainActivity : AppCompatActivity() {
 
                 }.show()
         }
+        img_crate.setOnClickListener {
+            val intent = Intent(applicationContext,MainActivity_Notes::class.java)
+            startActivity(intent)
+        }
+
+        tv_listNote.setOnClickListener {
+            val intent = Intent(applicationContext,MainActivity_List_Notes::class.java)
+            startActivity(intent)
+        }
 
 
         listFragment.apply {
@@ -90,6 +104,12 @@ class MainActivity : AppCompatActivity() {
                 index = position
                 var dateTime = pageAdapter.fragList[index].selectedDate
                 monthYearTV.text = monthYearFromDate(dateTime)
+
+                val share = this@MainActivity.getSharedPreferences("month_year", Context.MODE_PRIVATE)
+                val editor = share.edit()
+                editor.putInt("month", pageAdapter.fragList[position].selectedDate.month.value)
+                editor.putInt("year", pageAdapter.fragList[position].selectedDate.year)
+                editor.commit()
             }
 
             override fun onPageScrollStateChanged(state: Int) {
@@ -101,7 +121,11 @@ class MainActivity : AppCompatActivity() {
                     } else if (index > PAGE_CENTER) {
                         dateTime = dateTime.plusMonths(1)
                     }
-
+                    val share = this@MainActivity.getSharedPreferences("month_year", Context.MODE_PRIVATE)
+                    val editor = share.edit()
+                    editor.putInt("month", pageAdapter.fragList[1].selectedDate.month.value)
+                    editor.putInt("year", pageAdapter.fragList[1].selectedDate.year)
+                    editor.commit()
                     monthYearTV.text = monthYearFromDate(dateTime)
                     pageAdapter.setCalendar(dateTime, start)
                     viewPager_layout.setCurrentItem(1, false)
