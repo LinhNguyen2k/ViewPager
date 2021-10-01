@@ -47,4 +47,6 @@ dependencies {
     implementation 'se.emilsjolander:stickylistheaders:2.7.0'
     implementation "androidx.recyclerview:recyclerview:1.2.1"
     implementation 'com.chauthai.swipereveallayout:swipe-reveal-layout:1.4.1'
+
+    implementation 'com.opencsv:opencsv:4.6'
 }

@@ -75,5 +75,41 @@
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
         android:background="@drawable/custom_layout_list_notes" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:paddingHorizontal="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:layout_alignParentBottom="true"
+            android:background="#2E2E2E">
+
+            <TextView
+                android:id="@+id/tv_backup"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentLeft="true"
+                android:background="#2E2E2E"
+                android:gravity="center"
+                android:text="Backup"
+                android:textAllCaps="false"
+                android:textColor="#FFD700"
+                android:textSize="16sp" />
+            <TextView
+                android:textSize="16sp"
+                android:gravity="center"
+                android:id="@+id/tv_restore"
+                android:layout_width="wrap_content"
+                android:layout_height="55dp"
+                android:layout_alignParentRight="true"
+                android:text="Restore"
+                android:textAllCaps="false"
+                android:textColor="#FFD700" />
+        </RelativeLayout>
+
+
+    </RelativeLayout>
 
 </LinearLayout>

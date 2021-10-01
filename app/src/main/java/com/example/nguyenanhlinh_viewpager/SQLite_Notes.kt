@@ -44,6 +44,12 @@ class SQLite_Notes(context: Context?) : SQLiteOpenHelper(context, DB_NAME, null,
             "localdate=?",
             arrayOf(localdate))
     }
+    fun deleteAllNotes(): Int {
+        val db = this.writableDatabase
+        return db.delete(DB_TABLE_NOTES,
+            null,
+           null)
+    }
     fun updateData(note: String, localdate: String):
             Boolean {
         val db = this.writableDatabase
