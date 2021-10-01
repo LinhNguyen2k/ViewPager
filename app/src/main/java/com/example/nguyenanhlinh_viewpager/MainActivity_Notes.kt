@@ -6,7 +6,11 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import com.example.nguyenanhlinh_viewpager.model.Notes
+import kotlinx.android.synthetic.main.activity_main_detail.*
 import kotlinx.android.synthetic.main.activity_main_notes.*
+import kotlinx.android.synthetic.main.activity_main_notes.img_back
+import kotlinx.android.synthetic.main.activity_main_notes.tv_monthYearTV
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -33,16 +37,27 @@ class MainActivity_Notes : AppCompatActivity() {
 //            edt_notes.setText(edt_note)
 //        }
 
+        var checkDates = checkDate("$day/$month/$year")
+        edt_notes.setText(checkDates.notes)
 
         tv_done.setOnClickListener {
             if (edt_notes.text.toString() != null) {
-                val db = SQLite_Notes(this)
-                val value: Long = db.addNote(edt_notes.text.toString(), "$day/$month/$year")
-                Log.d(TAG, "${day + month + year}")
-                val intent = Intent(applicationContext, MainActivity_List_Notes::class.java)
-                startActivity(intent)
-                finish()
-                return@setOnClickListener
+                if (checkDates.check) {
+                    val db = SQLite_Notes(this)
+                    val value: Boolean =
+                        db.updateData(edt_notes.text.toString(), checkDates.localdate)
+                    val intent = Intent(applicationContext, MainActivity_List_Notes::class.java)
+                    startActivity(intent)
+                    finish()
+                } else {
+                    val db = SQLite_Notes(this)
+                    val value: Long = db.addNote(edt_notes.text.toString(), "$day/$month/$year")
+                    Log.d(TAG, "${day + month + year}")
+                    val intent = Intent(applicationContext, MainActivity_List_Notes::class.java)
+                    startActivity(intent)
+                    finish()
+                    return@setOnClickListener
+                }
             } else {
                 val intent = Intent(this, MainActivity::class.java)
                 startActivity(intent)
@@ -57,5 +72,17 @@ class MainActivity_Notes : AppCompatActivity() {
             finish()
         }
 
+    }
+
+    fun checkDate(localDate: String): Notes {
+        val sqliteNotes = SQLite_Notes(this)
+        var list = sqliteNotes.getAllListNotes()
+        if (list != null) {
+            for (item in list) {
+                if (localDate == item.localdate)
+                    return item
+            }
+        }
+        return Notes(localDate, "", true)
     }
 }
