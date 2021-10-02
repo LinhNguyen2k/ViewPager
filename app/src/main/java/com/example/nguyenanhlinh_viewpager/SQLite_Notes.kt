@@ -27,7 +27,21 @@ class SQLite_Notes(context: Context?) : SQLiteOpenHelper(context, DB_NAME, null,
             onCreate(db)
         }
     }
-
+    fun insertList(list:ArrayList<Notes>)
+    {
+        list.forEach{
+            insertDB(it)
+        }
+    }
+    fun insertDB(note: Notes): Long {
+        val db = this.writableDatabase
+        val contentValues = ContentValues()
+        contentValues.put("note", note.notes)
+        contentValues.put("localdate", note.localdate)
+        var success = db.insert(DB_TABLE_NOTES, null, contentValues)
+        db.close()
+        return success
+    }
     fun addNote(
         note: String,
         localdate: String,

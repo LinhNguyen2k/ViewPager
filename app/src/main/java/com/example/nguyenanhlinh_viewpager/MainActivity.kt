@@ -74,9 +74,22 @@ class MainActivity : AppCompatActivity() {
 
                 }.show()
         }
+
         img_crate.setOnClickListener {
-            val intent = Intent(applicationContext,MainActivity_Notes::class.java)
-            startActivity(intent)
+            var i = 1
+            val sharedPreferences1 = applicationContext.getSharedPreferences("date", Context.MODE_PRIVATE)
+            val editor1 = sharedPreferences1.edit()
+            var check = sharedPreferences1.getInt("click",0)
+            if (i == check){
+                val intent = Intent(applicationContext,MainActivity_Notes::class.java)
+                startActivity(intent)
+                editor1.remove("click").commit()
+                return@setOnClickListener
+            }else{
+                Toast.makeText(applicationContext,"Bạn chưa chọn ngày",Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
         }
 
         tv_listNote.setOnClickListener {

@@ -22,7 +22,9 @@ class MainActivity_Notes : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main_notes)
         supportActionBar?.hide()
+        var localDate = LocalDate.now()
         val share = this.getSharedPreferences("date", Context.MODE_PRIVATE)
+        val editor = share.edit()
         val day = share.getInt("dayOfWeek", 0)
         val month = share.getInt("month", 0)
         val year = share.getInt("year", 0)
@@ -39,31 +41,56 @@ class MainActivity_Notes : AppCompatActivity() {
 
         var checkDates = checkDate("$day/$month/$year")
         edt_notes.setText(checkDates.notes)
+        edt_note = edt_notes.text.toString()
 
         tv_done.setOnClickListener {
-            if (edt_notes.text.toString() != null) {
-                if (checkDates.check) {
-                    val db = SQLite_Notes(this)
-                    val value: Boolean =
-                        db.updateData(edt_notes.text.toString(), checkDates.localdate)
-                    val intent = Intent(applicationContext, MainActivity_List_Notes::class.java)
-                    startActivity(intent)
-                    finish()
-                } else {
-                    val db = SQLite_Notes(this)
-                    val value: Long = db.addNote(edt_notes.text.toString(), "$day/$month/$year")
-                    Log.d(TAG, "${day + month + year}")
-                    val intent = Intent(applicationContext, MainActivity_List_Notes::class.java)
-                    startActivity(intent)
-                    finish()
-                    return@setOnClickListener
-                }
+//            if (edt_notes.text.toString() != null) {
+//                if (checkDates.check) {
+//                    val db = SQLite_Notes(this)
+//                    val value: Boolean =
+//                        db.updateData(edt_notes.text.toString(), checkDates.localdate)
+//                    val intent = Intent(applicationContext, MainActivity_List_Notes::class.java)
+//                    startActivity(intent)
+//                    finish()
+//                } else {
+
+            if (edt_notes.text.toString() != null && checkDates.notes == "") {
+                val db = SQLite_Notes(this)
+                val value: Long = db.addNote(edt_notes.text.toString(), "$day/$month/$year")
+
+                val intent = Intent(applicationContext, MainActivity_List_Notes::class.java)
+                startActivity(intent)
+                finish()
+                return@setOnClickListener
+            } else if (edt_notes.text.toString() != null && checkDates.notes != "") {
+                val db = SQLite_Notes(this)
+                val value: Boolean =
+                    db.updateData(edt_notes.text.toString(), checkDates.localdate)
+                val intent = Intent(applicationContext, MainActivity_List_Notes::class.java)
+                startActivity(intent)
+                finish()
             } else {
+
                 val intent = Intent(this, MainActivity::class.java)
                 startActivity(intent)
                 finish()
                 return@setOnClickListener
             }
+//                    else{
+//                        var localDate = LocalDate.now()
+//                        val db = SQLite_Notes(this)
+//                        val value: Long = db.addNote(edt_notes.text.toString(), "${localDate.dayOfMonth}/${localDate.month}/${localDate.year}")
+//                        Log.d(TAG, "${day + month + year}")
+//                        val intent = Intent(applicationContext, MainActivity_List_Notes::class.java)
+//                        startActivity(intent)
+//                        finish()
+//                        return@setOnClickListener
+//                    }
+
+//                }
+//            } else {
+//
+//            }
         }
 
         img_back.setOnClickListener {
@@ -79,10 +106,12 @@ class MainActivity_Notes : AppCompatActivity() {
         var list = sqliteNotes.getAllListNotes()
         if (list != null) {
             for (item in list) {
-                if (localDate == item.localdate)
+                if (localDate == item.localdate) {
                     return item
+                }
+
             }
         }
-        return Notes(localDate, "", true)
+        return Notes("", localDate, true)
     }
 }

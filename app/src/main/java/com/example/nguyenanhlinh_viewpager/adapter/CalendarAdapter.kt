@@ -82,20 +82,24 @@ class CalendarAdapter(
 
         } else {
             holder.bg_layout.setBackgroundColor(0)
-            val share = context?.getSharedPreferences("date", Context.MODE_PRIVATE)
-
             val sqliteNotes = SQLite_Notes(context)
+            val share = context?.getSharedPreferences("date", Context.MODE_PRIVATE)
+            val share1 = context?.getSharedPreferences("date1", Context.MODE_PRIVATE)
+            var editor = share?.edit()
+            var editor1 = share1?.edit()
+            val check_day = share?.getBoolean("checkDayOfMonth",false)
+
+
             dateChecked = "${daysOfMonth[holder.adapterPosition].day}/${
-                month}/${year}"
-            if (!sqliteNotes.checkLocalDate(dateChecked) && daysOfMonth[holder.adapterPosition].checkDayOfMonth == share?.getBoolean(
-                    "checkDayOfMonth",
-                    false
-                )
+                month
+            }/${year}"
+            if (!sqliteNotes.checkLocalDate(dateChecked) && daysOfMonth[holder.adapterPosition].checkDayOfMonth == check_day
+
             ) {
                 holder.bg_layout.setBackgroundColor(Color.GREEN)
 
             }
-
+//            editor?.clear()?.commit()
 //            if (month == share?.getInt("month", 0)
 //                && year == share.getInt("year", 0)
 //                && position > 6
@@ -159,6 +163,7 @@ class CalendarAdapter(
 
             override fun onSingleClick() {
 //                check = 1
+                var i = 1
                 if (index == -1) index = position
                 daysOfMonth[index].check = false
                 daysOfMonth[position].check = true
@@ -167,12 +172,15 @@ class CalendarAdapter(
                 color = Color.CYAN
                 notifyItemChanged(position)
                 val editor1 = sharedPreferences1.edit()
+
                 editor1?.putInt("index", position)
                 editor1?.putInt("dayOfWeek", daysOfMonth[position].day.toInt())
                 editor1?.putBoolean("checkDayOfMonth", daysOfMonth[position].checkDayOfMonth)
                 editor1?.putInt("month", sharedPreferences2!!.getInt("month", 0))
                 editor1?.putInt("year", sharedPreferences2!!.getInt("year", 0))
+                editor1?.putInt("click", i )
                 editor1?.commit()
+
 
             }
 

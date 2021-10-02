@@ -7,12 +7,14 @@ import android.os.Bundle
 import android.os.Environment
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.nguyenanhlinh_viewpager.adapter.ListNoteAdapter
 import com.example.nguyenanhlinh_viewpager.model.Notes
+import com.example.nguyenanhlinh_viewpager.model.WriteReadFile
 import com.opencsv.CSVReader
 import kotlinx.android.synthetic.main.activity_main_list_notes.*
 import kotlinx.android.synthetic.main.activity_main_list_notes.img_back
@@ -28,8 +30,6 @@ import kotlin.collections.ArrayList
 class MainActivity_List_Notes : AppCompatActivity() {
     lateinit var listNotes: ArrayList<Notes>
     lateinit var listNoteAdapter: ListNoteAdapter
-    private val BACKUP = 1
-    private val RESTORE = 2
     private lateinit var storagePermission: Array<String>
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,6 +38,7 @@ class MainActivity_List_Notes : AppCompatActivity() {
         storagePermission = arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
 
         supportActionBar?.hide()
+        var writeFile = WriteReadFile(this)
         val sqliteNotes = SQLite_Notes(this)
         listNotes = sqliteNotes.getAllListNotes()!!
         sortDayOfMonth()
@@ -61,101 +62,25 @@ class MainActivity_List_Notes : AppCompatActivity() {
             }
         })
         tv_backup.setOnClickListener {
-            if (checkStoragePermission()) {
-                backUp()
-            } else {
-                requestStoragePermissionExport()
-            }
+            writeFile.writeFile(sqliteNotes.getAllListNotes()!!)
+            Toast.makeText(this, "Backup thành công", Toast.LENGTH_SHORT).show()
         }
         tv_restore.setOnClickListener {
-            if (checkStoragePermission()) {
-                val delete : Int = sqliteNotes.deleteAllNotes()
-                reStore()
-                onResume()
-                listNotes = sqliteNotes.getAllListNotes()!!
-                listNoteAdapter = ListNoteAdapter(listNotes, applicationContext)
-                rc_list_note.adapter = listNoteAdapter
-                listNoteAdapter.notifyDataSetChanged()
-            } else {
-                requestStoragePermissionImport()
+            val delete: Int = sqliteNotes.deleteAllNotes()
+            var list = writeFile.readFile()
+            sqliteNotes.insertList(list)
+            list.forEach {
+                Log.d("localdate :",it.localdate)
+                Log.d("notes :",it.notes)
             }
+            listNotes = sqliteNotes.getAllListNotes()!!
+            listNoteAdapter = ListNoteAdapter(listNotes, applicationContext)
+            rc_list_note.adapter = listNoteAdapter
+            listNoteAdapter.notifyDataSetChanged()
+
         }
 
     }
-
-    fun checkStoragePermission(): Boolean {
-        return ContextCompat.checkSelfPermission(this,
-            android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == (PackageManager.PERMISSION_GRANTED)
-    }
-
-    private fun requestStoragePermissionImport() {
-        ActivityCompat.requestPermissions(this, storagePermission, BACKUP)
-    }
-
-    private fun requestStoragePermissionExport() {
-        ActivityCompat.requestPermissions(this, storagePermission, RESTORE)
-    }
-
-    fun backUp() {
-        val folder = File(Environment.getExternalStorageDirectory()
-            .toString() + "/" + "NguyenAnhLinh_ViewPager")
-
-        var isFolderCreated = false
-
-        if (!folder.exists())
-            isFolderCreated = folder.mkdir()
-        val csvFileName = "SQLite_Backup.csv"
-
-        val fileNameAndPath = "$folder/$csvFileName"
-
-        var dateList = ArrayList<Notes>()
-        val sqliteNotes = SQLite_Notes(this)
-        dateList.clear()
-        dateList = sqliteNotes.getAllListNotes()!!
-
-        try {
-            val fw = FileWriter(fileNameAndPath)
-            for (i in dateList.indices) {
-                fw.append("" + dateList[i].notes)
-                fw.append(",")
-                fw.append("" + dateList[i].localdate)
-                fw.append("\n")
-            }
-            fw.flush()
-            fw.close()
-            Toast.makeText(this, "Backup success", Toast.LENGTH_SHORT).show()
-        } catch (e: Exception) {
-            Toast.makeText(this, e.message, Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    fun reStore() {
-        val filePathAddName =
-            "${Environment.getExternalStorageDirectory()}/NguyenAnhLinh_ViewPager/SQLite_Backup.csv"
-
-        val cvsFile = File(filePathAddName)
-
-        if (cvsFile.exists()) {
-            try {
-                val csvReader = CSVReader(FileReader(cvsFile.absoluteFile))
-                var nextLine: Array<String>
-                while (csvReader.readNext().also { nextLine = it } != null) {
-                    val content = nextLine[0]
-                    val localedate = nextLine[1]
-
-                    val db = SQLite_Notes(this)
-                    val value: Long = db.addNote(content, localedate)
-                }
-            } catch (e: Exception) {
-                Toast.makeText(this, "import success", Toast.LENGTH_SHORT).show()
-
-            }
-        } else {
-            Toast.makeText(this, "No data", Toast.LENGTH_SHORT).show()
-
-        }
-    }
-
 
     private fun filter(text: String) {
         val filter: ArrayList<Notes> = ArrayList()
@@ -170,28 +95,4 @@ class MainActivity_List_Notes : AppCompatActivity() {
         listNotes.sortBy { it.localdate }
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray,
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-
-        when (requestCode) {
-            BACKUP -> {
-                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    backUp()
-                } else {
-                    Toast.makeText(this, "Không được cho phép", Toast.LENGTH_SHORT).show()
-                }
-            }
-            RESTORE -> {
-                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    backUp()
-                } else {
-                    Toast.makeText(this, "Không được cho phép", Toast.LENGTH_SHORT).show()
-                }
-            }
-        }
-    }
 }
